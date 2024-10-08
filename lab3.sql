@@ -92,7 +92,10 @@ select count(*) from employees;
 
 --11
 
-select code from departments where (select department from employees);
+select code, name from departments where code in (
+    select department from employees
+    group by department having count(*) > 2
+    );
 
 --12
 
@@ -102,8 +105,43 @@ limit 1 offset 1;
 
 --13
 
-select lastname
-from employees e
-join departments d on d.code = e.department
-order by budget asc
-limit 1;
+select lastname || ' ' || name
+username from employees where department =
+                              (select code from departments where budget = (select min(budget) from departments));
+
+--14
+
+select name from employees
+where city = 'Almaty';
+select name from customers
+where city = 'Almaty';
+
+--15
+
+select budget from departments
+where budget > 60000
+order by budget, code desc;
+
+--16
+
+update departments set budget = budget - (0.1 * budget)
+where budget = (select min(budget) from departments);
+
+
+select budget from departments;
+
+--17
+
+update employees set department = (select code from departments where name = 'IT')
+where name = 'Research';
+
+select * from employees;
+
+--18
+
+delete from employees where department = (select code from departments where name = 'IT');
+select * from employees;
+
+--19
+
+delete from employees;
